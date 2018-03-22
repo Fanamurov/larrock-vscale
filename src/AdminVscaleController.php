@@ -4,7 +4,6 @@ namespace Larrock\ComponentVscale;
 
 use Illuminate\Routing\Controller;
 use Larrock\ComponentVscale\Helpers\Vscale;
-use Larrock\Core\Traits\AdminMethodsIndex;
 use LarrockVscale;
 use Request;
 
@@ -33,6 +32,7 @@ class AdminVscaleController extends Controller
      *
      * @param $ctid
      * @return $this
+     * @throws \Exception
      */
     public function backup($ctid)
     {
@@ -43,8 +43,8 @@ class AdminVscaleController extends Controller
     /**
      * Восстановление сервера из бекапа
      *
-     * @param Request $request
      * @return $this
+     * @throws \Exception
      */
     public function rebuild($ctid)
     {

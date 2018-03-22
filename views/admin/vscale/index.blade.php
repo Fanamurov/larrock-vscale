@@ -42,7 +42,7 @@
                         <td>{{ $scalet->rplan }}</td>
                         <td>{{ $scalet->status }}</td>
                         <td>
-                            <a href="{{ route('vscale.backup', ['ctid' => $scalet->ctid]) }}" class="uk-button uk-button-default uk-button-small">Создать бекап</a>
+                            <a href="{{ route('admin.vscale.backup', ['ctid' => $scalet->ctid]) }}" class="uk-button uk-button-default uk-button-small">Создать бекап</a>
                         </td>
                     </tr>
                     @if(\count($backups) > 0)
@@ -69,7 +69,7 @@
                                                 <td>{{ $backup->status }}</td>
                                                 <td>{{ $backup->active }}</td>
                                                 <td>
-                                                    <a href="{{ route('vscale.rebuild', ['ctid' => $backup->scalet]) }}" class="uk-button uk-button-danger uk-button-small">Восстановить</a>
+                                                    <a href="{{ route('admin.vscale.rebuild', ['ctid' => $backup->scalet]) }}" class="uk-button uk-button-danger uk-button-small">Восстановить</a>
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -87,13 +87,9 @@
         </div>
 
         <div class="uk-margin-large-bottom ibox-content">
-            <p>TODO: автоматическое создание бекапов/удаление старых</p>
-            <form class="uk-form">
-                <label>Создавать бекапы раз в месяц</label>
-                <label>Создавать бекапы раз в неделю</label>
-                <label>Создавать бекапы каждый день</label>
-                <label>Хранить Х бекапов</label>
-            </form>
+            <h3>Создание cron-заданий</h3>
+            <p>Создание бекапа</p>
+            <p>{{ route('vscale.createBackup') }}</p>
         </div>
     @endif
 @endsection

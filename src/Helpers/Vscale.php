@@ -97,6 +97,7 @@ class Vscale
                 }
                 return $body;
             }
+            return null;
         });
     }
 
@@ -110,7 +111,6 @@ class Vscale
      */
     public function backup($ctid)
     {
-        dd($ctid);
         $client = new Client();
         $response = $client->post('https://api.vscale.io/v1/scalets/'. $ctid .'/backup', [
             'headers' => [
@@ -123,16 +123,15 @@ class Vscale
             $body = json_decode($response->getBody()->getContents());
             MessageLarrock::success('Бекап '. $body->id .' создан ' . $body->created);
             return $body;
-        }else{
-            MessageLarrock::danger('Попытка создания бекапа завершилось ошибкой');
         }
+        MessageLarrock::danger('Попытка создания бекапа завершилось ошибкой');
         return null;
     }
 
 
     /**
      * Servers - Восстановление сервера из резервной копии
-     * @TODO: нужно использовать этот метод через ajax запрос, затем начать раз в n-секунд проверять доступность сайта,
+     * TODO: нужно использовать этот метод через ajax запрос, затем начать раз в n-секунд проверять доступность сайта,
      * как только сайт станет доступен - перезагрузить страницу
      *
      * @see https://developers.vscale.io/documentation/api/v1/#api-Servers-RestoreServerBackup
@@ -142,7 +141,6 @@ class Vscale
      */
     public function rebuild($ctid)
     {
-        dd($ctid);
         $client = new Client();
         $response = $client->patch('https://api.vscale.io/v1/scalets/'. $ctid .'/rebuild', [
             'headers' => [
@@ -156,9 +154,8 @@ class Vscale
             $body = json_decode($response->getBody()->getContents());
             MessageLarrock::success('Сервер будет восстановлен из бекапа в течении минуты');
             return $body;
-        }else{
-            MessageLarrock::danger('Попытка восстановление бекапа завершилось ошибкой');
         }
+        MessageLarrock::danger('Попытка восстановление бекапа завершилось ошибкой');
         return null;
     }
 }
