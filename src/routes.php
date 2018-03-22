@@ -1,5 +1,7 @@
 <?php
 
+Route::get('/vscale/backup/{ctid}/{APP_KEY}', 'Larrock\ComponentVscale\VscaleController@backup')->name('vscale.backup');
+
 Route::group(['prefix' => 'admin'], function(){
     Route::get('/vscale', 'Larrock\ComponentVscale\AdminVscaleController@index')->name('admin.vscale.index');
     Route::get('/vscale/rebuild/{ctid}', 'Larrock\ComponentVscale\AdminVscaleController@rebuild')->name('admin.vscale.rebuild');

@@ -40,6 +40,7 @@ class Vscale
                 $body->balance = (float) $body->balance / 100;
                 return $body;
             }
+            return null;
         });
     }
 
@@ -62,9 +63,9 @@ class Vscale
             ]);
 
             if($response->getStatusCode() === 200){
-                $body = json_decode($response->getBody()->getContents());
-                return $body;
+                return json_decode($response->getBody()->getContents());
             }
+            return null;
         });
     }
 
@@ -102,6 +103,32 @@ class Vscale
     }
 
     /**
+     * Servers - Просмотр информации о сервере
+     *
+     * @see https://developers.vscale.io/documentation/api/v1/#api-Servers-GetScaletCtid
+     * @param $ctid
+     * @return mixed
+     */
+    public function scaletInfo($ctid)
+    {
+        $cache_key = sha1('vscaleScaletInfo'. $ctid);
+        return Cache::remember($cache_key, 60, function () use ($ctid) {
+            $client = new Client();
+            $response = $client->get('https://api.vscale.io/v1/scalets/'. $ctid, [
+                'headers' => [
+                    'Accept'     => 'application/json',
+                    'X-Token'    => $this->token
+                ]
+            ]);
+
+            if($response->getStatusCode() === 200){
+                return json_decode($response->getBody()->getContents());
+            }
+            return null;
+        });
+    }
+
+    /**
      * Servers - Создание резервной копии
      *
      * @see https://developers.vscale.io/documentation/api/v1/#api-Servers-CreatingBackupCopy
@@ -116,15 +143,17 @@ class Vscale
             'headers' => [
                 'Accept'     => 'application/json',
                 'X-Token'    => $this->token
+            ],
+            'json' => [
+                'name' => 'backup'. date('YmdHis') .'_'. $ctid
             ]
         ]);
 
         if($response->getStatusCode() === 200){
             $body = json_decode($response->getBody()->getContents());
-            MessageLarrock::success('Бекап '. $body->id .' создан ' . $body->created);
+            MessageLarrock::success('Бекап '. $body->id .' создан ' . $body->created, TRUE);
             return $body;
         }
-        MessageLarrock::danger('Попытка создания бекапа завершилось ошибкой');
         return null;
     }
 
@@ -152,10 +181,34 @@ class Vscale
         if($response->getStatusCode() === 200){
             //Особо не имеет смысла, некоторое время сервер будет недоступен
             $body = json_decode($response->getBody()->getContents());
-            MessageLarrock::success('Сервер будет восстановлен из бекапа в течении минуты');
+            MessageLarrock::success('Сервер будет восстановлен из бекапа в течении минуты', TRUE);
             return $body;
         }
-        MessageLarrock::danger('Попытка восстановление бекапа завершилось ошибкой');
+        return null;
+    }
+
+    /**
+     * Backups - Удаление резервной копии
+     *
+     * @see https://developers.vscale.io/documentation/api/v1/#api-Backups-BackupDelete
+     * @param $backupId
+     * @return mixed|null
+     */
+    public function removeBackup($backupId)
+    {
+        $client = new Client();
+        $response = $client->delete('https://api.vscale.io/v1/backups/'. $backupId, [
+            'headers' => [
+                'Accept'     => 'application/json',
+                'X-Token'    => $this->token
+            ]
+        ]);
+
+        if($response->getStatusCode() === 200){
+            $body = json_decode($response->getBody()->getContents());
+            MessageLarrock::success('Бекап '. $backupId .' удален', TRUE);
+            return $body;
+        }
         return null;
     }
 }

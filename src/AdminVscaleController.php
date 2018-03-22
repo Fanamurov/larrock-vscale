@@ -5,7 +5,6 @@ namespace Larrock\ComponentVscale;
 use Illuminate\Routing\Controller;
 use Larrock\ComponentVscale\Helpers\Vscale;
 use LarrockVscale;
-use Request;
 
 class AdminVscaleController extends Controller
 {

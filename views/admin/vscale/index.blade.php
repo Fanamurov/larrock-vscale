@@ -87,9 +87,15 @@
         </div>
 
         <div class="uk-margin-large-bottom ibox-content">
-            <h3>Создание cron-заданий</h3>
-            <p>Создание бекапа</p>
-            <p>{{ route('vscale.createBackup') }}</p>
+            <h3>Сrontab. Создание бекапов серверов каждое первое число любого месяца</h3>
+            @foreach($scalets as $scalet)
+                <p>Сервер {{ $scalet->name }}</p>
+                <div class="uk-form">
+                    <input class="uk-input uk-form-large" type="text" disabled
+                           value="@monthly {{ route('vscale.backup', ['APP_KEY' => md5(env('APP_KEY')), 'ctid' => $scalet->ctid]) }}">
+                    <p>По-молчанию скрипт удаляет бекапы созданные более {{ env('VSCALE_MONTH_DELETE', 3) }} месяцев назад</p>
+                </div>
+            @endforeach
         </div>
     @endif
 @endsection
