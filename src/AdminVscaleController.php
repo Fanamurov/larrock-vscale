@@ -20,9 +20,14 @@ class AdminVscaleController extends Controller
 
     public function index()
     {
-        $data['balance'] = $this->vscale->balance();
-        $data['scalets'] = $this->vscale->scalets();
-        $data['backups'] = $this->vscale->backups();
+        if(env('VSCALE_TOKEN') !== null){
+            $data['balance'] = $this->vscale->balance();
+            $data['scalets'] = $this->vscale->scalets();
+            $data['backups'] = $this->vscale->backups();
+        }else{
+            $data = [];
+            $data['balance'] = null;
+        }
         return view('larrock::admin.vscale.index', $data);
     }
 
