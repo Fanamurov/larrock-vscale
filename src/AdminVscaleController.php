@@ -2,9 +2,9 @@
 
 namespace Larrock\ComponentVscale;
 
+use LarrockVscale;
 use Illuminate\Routing\Controller;
 use Larrock\ComponentVscale\Helpers\Vscale;
-use LarrockVscale;
 
 class AdminVscaleController extends Controller
 {
@@ -20,19 +20,20 @@ class AdminVscaleController extends Controller
 
     public function index()
     {
-        if(env('VSCALE_TOKEN') !== null){
+        if (env('VSCALE_TOKEN') !== null) {
             $data['balance'] = $this->vscale->balance();
             $data['scalets'] = $this->vscale->scalets();
             $data['backups'] = $this->vscale->backups();
-        }else{
+        } else {
             $data = [];
             $data['balance'] = null;
         }
+
         return view('larrock::admin.vscale.index', $data);
     }
 
     /**
-     * Создание бекапа
+     * Создание бекапа.
      *
      * @param $ctid
      * @return $this
@@ -41,11 +42,12 @@ class AdminVscaleController extends Controller
     public function backup($ctid)
     {
         $this->vscale->backup($ctid);
+
         return back()->withInput();
     }
 
     /**
-     * Восстановление сервера из бекапа
+     * Восстановление сервера из бекапа.
      *
      * @return $this
      * @throws \Exception
@@ -53,6 +55,7 @@ class AdminVscaleController extends Controller
     public function rebuild($ctid)
     {
         $this->vscale->rebuild($ctid);
+
         return back()->withInput();
     }
 }

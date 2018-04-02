@@ -2,9 +2,8 @@
 
 namespace Larrock\ComponentVscale\Helpers;
 
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Client;
 use Cache;
+use GuzzleHttp\Client;
 use Larrock\Core\Helpers\MessageLarrock;
 
 class Vscale
@@ -17,7 +16,7 @@ class Vscale
     }
 
     /**
-     * Billing - Просмотр информации о текущем состоянии баланса
+     * Billing - Просмотр информации о текущем состоянии баланса.
      *
      * @see https://developers.vscale.io/documentation/api/v1/#api-Billing-GetBalance
      * @return mixed
@@ -25,27 +24,30 @@ class Vscale
     public function balance()
     {
         $cache_key = sha1('vscaleBalance');
+
         return Cache::remember($cache_key, 60, function () {
             $client = new Client();
             $response = $client->get('https://api.vscale.io/v1/billing/balance', [
                 'headers' => [
                     'Accept'     => 'application/json',
-                    'X-Token'    => $this->token
-                ]
+                    'X-Token'    => $this->token,
+                ],
             ]);
 
-            if($response->getStatusCode() === 200){
+            if ($response->getStatusCode() === 200) {
                 $body = json_decode($response->getBody()->getContents());
                 $body->summ = (float) $body->summ / 100;
                 $body->balance = (float) $body->balance / 100;
+
                 return $body;
             }
+
             return null;
         });
     }
 
     /**
-     * Servers - Получение списка серверов
+     * Servers - Получение списка серверов.
      *
      * @see https://developers.vscale.io/documentation/api/v1/#api-Servers-GetScalet
      * @return mixed
@@ -53,24 +55,26 @@ class Vscale
     public function scalets()
     {
         $cache_key = sha1('vscaleScalets');
+
         return Cache::remember($cache_key, 60, function () {
             $client = new Client();
             $response = $client->get('https://api.vscale.io/v1/scalets', [
                 'headers' => [
                     'Accept'     => 'application/json',
-                    'X-Token'    => $this->token
-                ]
+                    'X-Token'    => $this->token,
+                ],
             ]);
 
-            if($response->getStatusCode() === 200){
+            if ($response->getStatusCode() === 200) {
                 return json_decode($response->getBody()->getContents());
             }
+
             return null;
         });
     }
 
     /**
-     * Backups - Просмотр списка резервных копий
+     * Backups - Просмотр списка резервных копий.
      *
      * @see https://developers.vscale.io/documentation/api/v1/#api-Backups-ViewBackupsList
      * @return mixed
@@ -78,32 +82,35 @@ class Vscale
     public function backups()
     {
         $cache_key = sha1('vscaleBackups');
+
         return Cache::remember($cache_key, 60, function () {
             $client = new Client();
             $response = $client->get('https://api.vscale.io/v1/backups', [
                 'headers' => [
                     'Accept'     => 'application/json',
-                    'X-Token'    => $this->token
-                ]
+                    'X-Token'    => $this->token,
+                ],
             ]);
 
-            if($response->getStatusCode() === 200){
+            if ($response->getStatusCode() === 200) {
                 $body = json_decode($response->getBody()->getContents());
-                foreach ($body as $key => $item){
-                    if($item->active === true){
+                foreach ($body as $key => $item) {
+                    if ($item->active === true) {
                         $body[$key]->active = 'Активно';
-                    }else{
+                    } else {
                         $body[$key]->active = 'Не активно';
                     }
                 }
+
                 return $body;
             }
+
             return null;
         });
     }
 
     /**
-     * Servers - Просмотр информации о сервере
+     * Servers - Просмотр информации о сервере.
      *
      * @see https://developers.vscale.io/documentation/api/v1/#api-Servers-GetScaletCtid
      * @param $ctid
@@ -111,25 +118,27 @@ class Vscale
      */
     public function scaletInfo($ctid)
     {
-        $cache_key = sha1('vscaleScaletInfo'. $ctid);
+        $cache_key = sha1('vscaleScaletInfo'.$ctid);
+
         return Cache::remember($cache_key, 60, function () use ($ctid) {
             $client = new Client();
-            $response = $client->get('https://api.vscale.io/v1/scalets/'. $ctid, [
+            $response = $client->get('https://api.vscale.io/v1/scalets/'.$ctid, [
                 'headers' => [
                     'Accept'     => 'application/json',
-                    'X-Token'    => $this->token
-                ]
+                    'X-Token'    => $this->token,
+                ],
             ]);
 
-            if($response->getStatusCode() === 200){
+            if ($response->getStatusCode() === 200) {
                 return json_decode($response->getBody()->getContents());
             }
+
             return null;
         });
     }
 
     /**
-     * Servers - Создание резервной копии
+     * Servers - Создание резервной копии.
      *
      * @see https://developers.vscale.io/documentation/api/v1/#api-Servers-CreatingBackupCopy
      * @param $ctid
@@ -139,29 +148,30 @@ class Vscale
     public function backup($ctid)
     {
         $client = new Client();
-        $response = $client->post('https://api.vscale.io/v1/scalets/'. $ctid .'/backup', [
+        $response = $client->post('https://api.vscale.io/v1/scalets/'.$ctid.'/backup', [
             'headers' => [
                 'Accept'     => 'application/json',
-                'X-Token'    => $this->token
+                'X-Token'    => $this->token,
             ],
             'json' => [
-                'name' => 'backup'. date('YmdHis') .'_'. $ctid
-            ]
+                'name' => 'backup'.date('YmdHis').'_'.$ctid,
+            ],
         ]);
 
-        if($response->getStatusCode() === 200){
+        if ($response->getStatusCode() === 200) {
             $body = json_decode($response->getBody()->getContents());
-            MessageLarrock::success('Бекап '. $body->id .' создан ' . $body->created, TRUE);
+            MessageLarrock::success('Бекап '.$body->id.' создан '.$body->created, true);
+
             return $body;
         }
+
         return null;
     }
-
 
     /**
      * Servers - Восстановление сервера из резервной копии
      * TODO: нужно использовать этот метод через ajax запрос, затем начать раз в n-секунд проверять доступность сайта,
-     * как только сайт станет доступен - перезагрузить страницу
+     * как только сайт станет доступен - перезагрузить страницу.
      *
      * @see https://developers.vscale.io/documentation/api/v1/#api-Servers-RestoreServerBackup
      * @param $ctid
@@ -171,24 +181,26 @@ class Vscale
     public function rebuild($ctid)
     {
         $client = new Client();
-        $response = $client->patch('https://api.vscale.io/v1/scalets/'. $ctid .'/rebuild', [
+        $response = $client->patch('https://api.vscale.io/v1/scalets/'.$ctid.'/rebuild', [
             'headers' => [
                 'Accept'     => 'application/json',
-                'X-Token'    => $this->token
-            ]
+                'X-Token'    => $this->token,
+            ],
         ]);
 
-        if($response->getStatusCode() === 200){
+        if ($response->getStatusCode() === 200) {
             //Особо не имеет смысла, некоторое время сервер будет недоступен
             $body = json_decode($response->getBody()->getContents());
-            MessageLarrock::success('Сервер будет восстановлен из бекапа в течении минуты', TRUE);
+            MessageLarrock::success('Сервер будет восстановлен из бекапа в течении минуты', true);
+
             return $body;
         }
+
         return null;
     }
 
     /**
-     * Backups - Удаление резервной копии
+     * Backups - Удаление резервной копии.
      *
      * @see https://developers.vscale.io/documentation/api/v1/#api-Backups-BackupDelete
      * @param $backupId
@@ -197,18 +209,20 @@ class Vscale
     public function removeBackup($backupId)
     {
         $client = new Client();
-        $response = $client->delete('https://api.vscale.io/v1/backups/'. $backupId, [
+        $response = $client->delete('https://api.vscale.io/v1/backups/'.$backupId, [
             'headers' => [
                 'Accept'     => 'application/json',
-                'X-Token'    => $this->token
-            ]
+                'X-Token'    => $this->token,
+            ],
         ]);
 
-        if($response->getStatusCode() === 200){
+        if ($response->getStatusCode() === 200) {
             $body = json_decode($response->getBody()->getContents());
-            MessageLarrock::success('Бекап '. $backupId .' удален', TRUE);
+            MessageLarrock::success('Бекап '.$backupId.' удален', true);
+
             return $body;
         }
+
         return null;
     }
 }
