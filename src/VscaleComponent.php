@@ -2,8 +2,8 @@
 
 namespace Larrock\ComponentVscale;
 
-use Larrock\ComponentVscale\Facades\LarrockVscale;
 use Larrock\Core\Component;
+use Larrock\ComponentVscale\Facades\LarrockVscale;
 
 class VscaleComponent extends Component
 {
@@ -17,6 +17,6 @@ class VscaleComponent extends Component
     public function renderAdminMenu()
     {
         return view('larrock::admin.sectionmenu.types.default',
-            ['app' => LarrockVscale::getConfig(), 'url' => '/admin/'. LarrockVscale::getName()]);
+            ['app' => LarrockVscale::getConfig(), 'url' => '/admin/'.LarrockVscale::getName()]);
     }
 }

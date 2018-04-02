@@ -13,5 +13,4 @@ class LarrockVscale extends Facade
     {
         return 'larrockvscale';
     }
-
 }
