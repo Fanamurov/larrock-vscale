@@ -88,10 +88,11 @@
 
         <div class="uk-margin-large-bottom ibox-content">
             <h3>Сrontab. Создание бекапов серверов каждое первое число любого месяца</h3>
+            <p>Выполните "crontab -e" в консоли и внесите в конец списка следующую команду:</p>
             @foreach($scalets as $scalet)
                 <p>Сервер {{ $scalet->name }}</p>
                 <div class="uk-form">
-                    <input class="uk-input uk-form-large" type="text" disabled
+                    <input class="uk-input uk-form-large uk-width-1-1" type="text" disabled
                            value="@monthly {{ route('vscale.backup', ['APP_KEY' => md5(env('APP_KEY')), 'ctid' => $scalet->ctid]) }}">
                     <p>По-молчанию скрипт удаляет бекапы созданные более {{ env('VSCALE_MONTH_DELETE', 3) }} месяцев назад</p>
                 </div>
