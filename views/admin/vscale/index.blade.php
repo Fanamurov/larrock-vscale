@@ -1,11 +1,11 @@
 @extends('larrock::admin.main')
-@section('title') {{ $app->name }} admin @endsection
+@section('title') {{ $package->name }} admin @endsection
 
 @section('content')
     <div class="container-head uk-margin-bottom">
         <div class="uk-grid">
             <div class="uk-width-expand">
-                {!! Breadcrumbs::render('admin.'. $app->name .'.index') !!}
+                {!! Breadcrumbs::render('admin.'. $package->name .'.index') !!}
             </div>
             <div class="uk-width-auto"></div>
         </div>
