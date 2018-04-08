@@ -13,19 +13,19 @@ class AdminVscaleController extends Controller
     public function __construct()
     {
         $this->middleware(LarrockVscale::combineAdminMiddlewares());
-        $this->config = LarrockVscale::shareConfig();
+        LarrockVscale::shareConfig();
         \Config::set('breadcrumbs.view', 'larrock::admin.breadcrumb.breadcrumb');
         $this->vscale = new Vscale();
     }
 
     public function index()
     {
+        $data = [];
         if (env('VSCALE_TOKEN') !== null) {
             $data['balance'] = $this->vscale->balance();
             $data['scalets'] = $this->vscale->scalets();
             $data['backups'] = $this->vscale->backups();
         } else {
-            $data = [];
             $data['balance'] = null;
         }
 
